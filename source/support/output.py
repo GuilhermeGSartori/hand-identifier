@@ -6,4 +6,4 @@ def show_images(windows):
 
 def draw_points(points, img):
   for point in points:
-    cv2.circle(img, point['point'], 4, point['color'], -1)
+    cv2.circle(img, point['P'], 4, point['BGR'], -1)

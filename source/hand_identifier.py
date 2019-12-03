@@ -4,6 +4,7 @@ import imutils
 import numpy as np
 from support.constants import *
 from support.output import *
+from support.calculations import *
 
 
 video = cv2.VideoCapture(0)
@@ -25,11 +26,11 @@ while True:
 
     # threshholding and dilate to better find the countours
     gray = cv2.cvtColor(roi,cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (7, 7), 0)
-    (thresh, blackAndWhiteImage) = cv2.threshold(gray, 130, 255, cv2.THRESH_BINARY)
-    img_dilate = cv2.dilate(blackAndWhiteImage, None, iterations=2)
-    img_dilate = cv2.erode(img_dilate, None, iterations=2)
-    img = {'name': "filtered", 'img': img_dilate}
+    blur = cv2.GaussianBlur(gray, (7, 7), 0)
+    (thresh, blackAndWhiteImage) = cv2.threshold(blur, 156, 255, cv2.THRESH_BINARY)
+    processed_img = cv2.dilate(blackAndWhiteImage, None, iterations=2)
+    processed_img = cv2.erode(processed_img, None, iterations=2)
+    img = {'name': "filtered", 'img': processed_img}
     images.append(img)
 
     # Find edgemap
@@ -45,21 +46,31 @@ while True:
     # If a countour was found
     if cnts:
         # Get the countour with the biggest area (presumed to be hand)
-        c = max(cnts, key=cv2.contourArea)
-        cv2.drawContours(frame, [c + (X, Y)], -1, (0, 0, 255))
-        # Find extreme points and draw them.
-        left = {'point': tuple(c[c[:, :, 0].argmin()][0]), 'color': BGR_RED}
-        right = {'point': tuple(c[c[:, :, 0].argmax()][0]), 'color': BGR_GREEN}
-        top = {'point': tuple(c[c[:, :, 1].argmin()][0]), 'color': BGR_BLUE}
-        bot = {'point': tuple(c[c[:, :, 1].argmax()][0]), 'color': BGR_CYAN}
-        points.extend([left, right, top, bot])
-        draw_points(points, roi)
+        cntsSorted = sorted(cnts, key=lambda x: cv2.arcLength(x, 0))
+        c1 = cntsSorted[-1]
+        cv2.drawContours(frame, [c1 + (X, Y)], -1, BGR_RED)
 
-        # necessary to get only countours with SIMILAR area
-        # only if repeat a lot change the countour
-        # sum of biggest and close contours?
-        # hand should be alingned with the head (YZ)
-        # hand should fill up the processing space
+        # Find extreme points and draw them.
+        left = {'P': tuple(c1[c1[:, :, 0].argmin()][0]), 'BGR': BGR_RED}
+        right = {'P': tuple(c1[c1[:, :, 0].argmax()][0]), 'BGR': BGR_GREEN}
+        top = {'P': tuple(c1[c1[:, :, 1].argmin()][0]), 'BGR': BGR_BLUE}
+        bot = {'P': tuple(c1[c1[:, :, 1].argmax()][0]), 'BGR': BGR_CYAN}
+        points.extend([left, right, top, bot])
+
+        # If there is second biggest contour, consider it (most of times hand is
+        # segmented in capture)
+        if len(cntsSorted) > 1:
+            c2 = cntsSorted[-2]
+            new_P = check_contour2(c1, c2)
+            # If second biggest contour is close to the first
+            if new_P is not None:
+                i = 0
+                cv2.drawContours(frame, [c2 + (X, Y)], -1, BGR_BLUE)
+                # Update points if one or more points of c2 are more extreme
+                for i in range(4):
+                    if new_P[i]: points[i]['P'] = new_P[i]
+
+        draw_points(points, roi)
 
     img = {'name': "frame", 'img': frame}
     images.append(img)
@@ -69,8 +80,8 @@ while True:
     del images[:]
     del points[:]
 
-    key = cv2.waitKey(1)
-    if key == ESC: # exit on ESC
+    key = cv2.waitKey(1) # Wait 1 clock for user input
+    if key == ESC:
         break
 
-video.release(0)
+video.release
