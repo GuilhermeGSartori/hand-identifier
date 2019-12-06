@@ -12,10 +12,20 @@ BGR_GREEN = (0, 255, 0)
 # End
 
 # Processed Area
-X = 50
+X = 100
 deltaX = 300
 Y = 250
 deltaY = 400
+
+CaptureSquareToRoi = 15
 # End
+
+# Limits
+edgeLimitSize = 40
+# End
+
+# Time
+calibrationTime = 8
+#
 
 # Enf of Values
