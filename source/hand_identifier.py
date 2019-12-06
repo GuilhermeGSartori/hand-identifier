@@ -10,6 +10,8 @@ import sys
 from support.constants import *
 from support.output import *
 from support.auxiliar import *
+from support.player_ctrl.control import *
+from support.gestures import GestureType
 
 
 # Script Start:
@@ -35,6 +37,8 @@ else:
 video = cv2.VideoCapture(0)
 images = []
 points = []
+gesture = 0
+commandReady = False
 
 while True:
 
@@ -124,6 +128,22 @@ while True:
                     if new_P[i]: points[i]['P'] = new_P[i]
 
         draw_points(points, roi)
+
+        frameGesture = check_gesture(points)
+        if frameGesture != gesture:
+            gesture = frameGesture
+            gestureCounter = 0
+        else:
+            gestureCounter += 1
+            if gestureCounter == 30 and frameGesture != GestureType.NONE:
+                gestureCounter = 0
+                if frameGesture == GestureType.OPEN:
+                    commandReady = True
+                    print("ready for new gesture!")
+                elif commandReady:
+                    control = send_gesture(frameGesture)
+                    control()
+                    commandReady = False
 
     img = {'name': "frame", 'img': frame}
     images.append(img)

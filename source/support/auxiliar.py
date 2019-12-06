@@ -5,6 +5,7 @@ import numpy as np
 
 from .constants import *
 from .output import *
+from .gestures import GestureType
 
 # Calibration
 def find_frame_hsv(frame, everyX, everyY, size, square_matriz):
@@ -136,4 +137,27 @@ def  check_contour2(c1, c2):
             points.append(None)
 
     return points if close else None
+
+def check_gesture(points):
+    left, right, top, bot = points
+
+    if(top['P'][1] < VD):
+        if(left['P'][0] < VD*2 and right['P'][0] > (deltaX-X-(VD*2))):
+            return GestureType.OPEN
+        elif(abs(left['P'][0] - right['P'][0]) > VD):
+            return GestureType.BIGUP
+
+    else:
+        if(top['P'][1] < 2*VD):
+            return GestureType.SMALLUP
+
+        if(abs(left['P'][0] - right['P'][0]) > 2*VD):
+            return GestureType.FIST
+
+    return GestureType.NONE
+
+def send_gesture(gesture):
+    control = control_dictionary[str(gesture)]
+    return control
+
 # End of Calculations
