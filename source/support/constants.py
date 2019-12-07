@@ -1,3 +1,4 @@
+from .player_ctrl.control import *
 # Values:
 
 # Keyboard codes
@@ -18,6 +19,7 @@ Y = 250
 deltaY = 400
 
 CaptureSquareToRoi = 15
+VD = 25 # valid difference between point and limit to consider gesture
 # End
 
 # Limits
@@ -26,6 +28,16 @@ edgeLimitSize = 40
 
 # Time
 calibrationTime = 8
-#
+# End
+
+# Available control functions
+control_dictionary = {
+    'GestureType.FIST': fist,
+    'GestureType.BIGUP': bup,
+    'GestureType.SMALLUP': sup,
+    'GestureType.RIGHT': right,
+    'GestureType.LEFT': left
+}
+# End
 
 # Enf of Values
