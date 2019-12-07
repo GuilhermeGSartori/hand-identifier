@@ -34,7 +34,9 @@ calibrationTime = 8
 control_dictionary = {
     'GestureType.FIST': fist,
     'GestureType.BIGUP': bup,
-    'GestureType.SMALLUP': sup
+    'GestureType.SMALLUP': sup,
+    'GestureType.RIGHT': right,
+    'GestureType.LEFT': left
 }
 # End
 

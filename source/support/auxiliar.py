@@ -144,7 +144,11 @@ def check_gesture(points):
     if(top['P'][1] < VD):
         if(left['P'][0] < VD*2 and right['P'][0] > (deltaX-X-(VD*2))):
             return GestureType.OPEN
-        elif(abs(left['P'][0] - right['P'][0]) > VD):
+        elif(right['P'][0] > (deltaX-X-(VD))):
+            return GestureType.RIGHT
+        elif(left['P'][0] < VD):
+            return GestureType.LEFT
+        elif(abs(left['P'][0] - right['P'][0]) > VD/1.5):
             return GestureType.BIGUP
 
     else:

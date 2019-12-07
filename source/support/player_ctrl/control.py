@@ -16,3 +16,11 @@ def bup():
 def sup():
     print("volume down")
     pyautogui.press('down')
+
+def right():
+    print("forward")
+    pyautogui.press('right')
+
+def left():
+    print("backward")
+    pyautogui.press('left')
