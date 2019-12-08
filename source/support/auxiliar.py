@@ -3,7 +3,7 @@ import cv2
 import time
 import numpy as np
 
-from .constants import *
+from .values import *
 from .output import *
 from .gestures import GestureType
 
