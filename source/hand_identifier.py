@@ -7,7 +7,7 @@ import numpy as np
 import sys
 
 # files
-from support.constants import *
+from support.values import *
 from support.output import *
 from support.auxiliar import *
 from support.player_ctrl.control import *
@@ -34,18 +34,50 @@ elif 'get' in args.skin:
 else:
     sys.exit()
 
+cascPath = 'support/face_object/haarcascade_frontalface_default.xml'
 video = cv2.VideoCapture(0)
 images = []
 points = []
 gesture = 0
 commandReady = False
+frameNum = 0
+
+# Create the haar cascade
+faceCascade = cv2.CascadeClassifier(cascPath)
 
 while True:
-
     check, frame = video.read()
 
+    # for every "framesToFace" frame
+    if frameNum == 0:
+        # Find face in the frame using object detection
+        gray4face = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = faceCascade.detectMultiScale(
+            gray4face,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30),
+            flags = cv2.CASCADE_SCALE_IMAGE
+        )
+        frameNum = framesToFace*-1
+    frameNum += 1
+
+    # Define face positions
+    for (x, y, w, h) in faces:
+        X = x - w + handToFace - extraAreaSize
+        if X < 0:
+            X = 0
+        deltaX = x + handToFace + extraAreaSize
+        if deltaX > frame.shape[1]:
+            deltaX = frame.shape[1]
+        Y = y - extraAreaSize; deltaY = y+h+extraAreaSize
+        if Y < 0:
+            Y = 0
+        if deltaY > frame.shape[0]:
+            deltaY = frame.shape[0]
+
     # Get only a specific area of the screen (user will put his hand) to process
-    # In the future, the face recognition will define the ROI
+    # The face recognition defines the ROI
     roi = frame[Y:deltaY, X:deltaX]
 
     # Draw ROI on original frame (changes on ROI changes the frame)
@@ -129,18 +161,22 @@ while True:
 
         draw_points(points, roi)
 
+        # Check what gesture the points represent and if is constant with the last
         frameGesture = check_gesture(points)
         if frameGesture != gesture:
             gesture = frameGesture
             gestureCounter = 0
         else:
             gestureCounter += 1
-            if gestureCounter == 30 and frameGesture != GestureType.NONE:
+            # If gesture is consistent for a certain amount of time and exists
+            if gestureCounter == framesToGesture and frameGesture != GestureType.NONE:
                 gestureCounter = 0
+                # If gesture is a open hand, than the system can read other gestures next
                 if frameGesture == GestureType.OPEN:
                     commandReady = True
                     print("ready for new gesture!")
                 elif commandReady:
+                    # Execute gesture function from control.py
                     control = send_gesture(frameGesture)
                     control()
                     commandReady = False

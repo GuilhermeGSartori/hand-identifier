@@ -13,10 +13,15 @@ BGR_GREEN = (0, 255, 0)
 # End
 
 # Processed Area
+    # initial values (for calibration)
 X = 100
 deltaX = 300
 Y = 250
 deltaY = 400
+    # End
+
+handToFace = -100
+extraAreaSize = 5
 
 CaptureSquareToRoi = 15
 VD = 25 # valid difference between point and limit to consider gesture
@@ -28,6 +33,8 @@ edgeLimitSize = 40
 
 # Time
 calibrationTime = 8
+framesToFace = 20
+framesToGesture = 20
 # End
 
 # Available control functions
