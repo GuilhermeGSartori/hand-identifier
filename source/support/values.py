@@ -21,10 +21,10 @@ deltaY = 400
     # End
 
 handToFace = -100
-extraAreaSize = 5
+extraAreaSize = 15
 
 CaptureSquareToRoi = 15
-VD = 25 # valid difference between point and limit to consider gesture
+VD = 30 # valid difference between point and limit to consider gesture
 # End
 
 # Limits
@@ -34,7 +34,7 @@ edgeLimitSize = 40
 # Time
 calibrationTime = 8
 framesToFace = 20
-framesToGesture = 20
+framesToGesture = 10
 # End
 
 # Available control functions
