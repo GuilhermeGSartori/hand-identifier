@@ -141,8 +141,11 @@ def  check_contour2(c1, c2):
 def check_gesture(points):
     left, right, top, bot = points
 
-    if(top['P'][1] < VD*2):
-        if(left['P'][0] < VD*2 and right['P'][0] > (deltaX-X-(VD*2))):
+    #print("top" + str(top['P'][1]))
+    if(top['P'][1] < VD):
+        #print("left" + str(left['P'][0]))
+        #print("right" + str(right['P'][0]))
+        if(left['P'][0] < VD and right['P'][0] > (deltaX-X-(VD))):
             return GestureType.OPEN
         # elif(right['P'][0] > (deltaX-X-(VD))):
         #     return GestureType.RIGHT

@@ -24,7 +24,7 @@ handToFace = -100
 extraAreaSize = 15
 
 CaptureSquareToRoi = 15
-VD = 30 # valid difference between point and limit to consider gesture
+VD = 40 # valid difference between point and limit to consider gesture
 # End
 
 # Limits
